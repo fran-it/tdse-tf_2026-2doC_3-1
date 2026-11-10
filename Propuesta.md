@@ -163,8 +163,6 @@ El sistema está centralizado en un microcontrolador **STM32 F103RB**, el cual a
 
 ### **2. Elicitación de requisitos y casos de uso**
 
-### **2. Elicitación de requisitos y casos de uso**
-
 En el mercado del entretenimiento existen múltiples máquinas tipo arcade o juguetes domésticos orientados a la velocidad de reacción. Competidores como las [máquinas de *Whack-A-Mole* comerciales de gran formato](https://primetimeamusements.com/product/whac-a-mole/) ofrecen una experiencia robusta, pero son costosas, pesadas y cerradas a cualquier tipo de modificación o reprogramación.
 
 Por otro lado, existen aplicaciones móviles (como se observa en las búsquedas para [Android](https://play.google.com/store/search?q=whack+a+mole&pli=1&c=apps) e [iOS](https://apps.apple.com/ar/iphone/search?term=whack%20a%20mole)) que simulan esta mecánica en pantallas táctiles, pero carecen completamente del estímulo físico e inmersivo que proporciona golpear un botón real retroiluminado. Este proyecto se posiciona como una solución intermedia: un prototipo físico tangible, de funcionamiento intuitivo, que integra lógica programable y periféricos electrónicos, ideal para demostrar la integración de hardware y software en un dispositivo autónomo de escritorio.
