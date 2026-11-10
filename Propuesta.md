@@ -1,3 +1,5 @@
+<img src="https://www.fi.uba.ar/images/logo-fiuba.png" alt="logo-fiuba" width="300">
+
 # **Juego de reflejos con pulsadores retroiluminados**
 
 **Autores: Santander, Cristian; Flores Quiroga, Tobías; Itria, Franco**
@@ -30,7 +32,7 @@ Para comparar estas alternativas, se tienen en cuenta cinco aspectos caracterís
 4. **Dificultad técnica / Tiempo de implementación (8):** Balance entre el desafío de programación e integración electrónica y el tiempo disponible.
 5. **Costo (6):** Presupuesto necesario para botones especiales, pantallas y fuentes de alimentación.
 
-La siguiente tabla muestra los valores ponderados asignados a cada alternativa.
+La Tabla 1.2.1 muestra los valores ponderados asignados a cada alternativa.
 
 <table>
     <thead>
@@ -107,30 +109,65 @@ La siguiente tabla muestra los valores ponderados asignados a cada alternativa.
     </tbody>
 </table>
 <p align="center"><em>Tabla 1.2.1: Comparación de alternativas de proyecto.</em></p>
+
+
 #### **1.3 Selección de proyecto**
+
 
 Considerando la Tabla 1.2.1, se decide avanzar con la implementación del **Juego con pulsadores retroiluminados y display digital**. La variante mecánica tradicional presenta graves problemas de disponibilidad de hardware a nivel local y tiempos de implementación excesivos debido al desgaste de partes móviles. Por otro lado, la versión electrónica básica limita severamente la experiencia de usuario al no brindar métricas claras del desempeño.
 
 El proyecto seleccionado ofrece el balance perfecto: utiliza componentes electrónicos estándar fácilmente asequibles (sobre todo considerando que se comprarán vía sitios nacionales para minimizar tiempos de envío), proporciona una interfaz visual más cómoda para el usuario a través del display y los botones retroiluminados, y establece una arquitectura controlada por una unidad central que escala fácilmente hacia futuras etapas (como conectividad, modos multijugador o almacenamiento de récords, los cuales quedan fuera del alcance inicial).
 
-###### **1.3.1 Diagrama en bloques**
+#### **1.4 Diagrama en bloques**
 
-En la Figura 1.3.1 se muestra el diagrama en bloques del sistema con los principales módulos del proyecto.
+El sistema está centralizado en un microcontrolador **STM32 F103RB**, el cual actúa como la unidad de procesamiento encargada de gestionar la lógica del juego, leer las entradas de la interfaz de usuario, controlar los periféricos de salida y administrar los módulos de conectividad. En el diagrama de la Figura 1.4 se clasifican los periféricos según su protocolo de comunicación y se indica el alcance inicial del proyecto diferenciando los módulos del MVP (líneas continuas) de las ampliaciones futuras (líneas punteadas), a implementar en caso de disponer del tiempo necesario.
+
 
 <p align="center">
 	<img src="/img/diagrama_de_bloques.png" alt="Diagrama de bloques del sistema" width="600">
 </p>
-<p align="center"><em>Figura 1.3.1: Diagrama de bloques del sistema.</em></p>
+<p align="center"><em>Figura 1.4: Diagrama de bloques del sistema.</em></p>
 
-Los bloques trazados en línea de puntos representan elementos no contemplados en el diseño del MVP pero se planea implementarlos en caso de disponer del tiempo suficiente para hacerlo. 
+**Componentes del MVP:**
+
+* **Botón de inicio:** Interfaz de entrada digital conectada a un pin **GPIO** del microcontrolador, encargada de inicializar la partida.
+
+
+* **Botones 1 al 8:** Entradas digitales que conforman el panel de juego principal. Se conectan a través de pines **GPIO** para registrar la velocidad y precisión de las respuestas del jugador.
+
+
+* **LEDs 1 al 8:** Representan la retroiluminación de los botones de juego. Operan como salidas digitales controladas vía **GPIO** para indicar visualmente qué pulsador debe ser presionado.
+
+
+* **Display:** Pantalla de salida que muestra el estado de la partida y el puntaje acumulado, conectada al microcontrolador mediante el bus de datos **I2C**.
+
+
+
+**Componentes de escalabilidad:**
+
+* **Sensor LDR:** Fotorresistencia de entrada conectada a un pin **ADC** (Conversor Analógico-Digital). Permitirá sensar la luz ambiente para ajustar dinámicamente el contraste o brillo del display.
+
+
+* **Buzzer:** Actuador de salida sonoro controlado mediante una señal **PWM** (Modulación por Ancho de Pulsos) para proporcionar efectos de sonido inmersivos (aciertos, errores y fin del tiempo).
+
+
+* **Memoria E2PROM:** Módulo de conectividad no volátil destinado al almacenamiento permanente de los mejores puntajes, gestionado mediante los buses de comunicación **I2C o SPI**.
+
+
+* **Módulo BLE (Bluetooth Low Energy):** Periférico de conectividad inalámbrica enlazado a través de comunicación serie **UART** para futuras integraciones, como el envío de estadísticas a una aplicación móvil.
+
+
+* **Enlace multijugador:** Interfaz de comunicación operada mediante un puerto **UART** que permitirá la interconexión directa con otra consola idéntica para habilitar modos de juego competitivos simultáneos.
 
 ---
 
 ### **2. Elicitación de requisitos y casos de uso**
 
-En el mercado del entretenimiento existen múltiples máquinas tipo arcade o juguetes domésticos orientados a la velocidad de reacción. Competidores como las máquinas de *Whack-A-Mole* comerciales de gran formato ofrecen una experiencia robusta, pero son costosas, pesadas y cerradas a cualquier tipo de modificación o reprogramación.
+### **2. Elicitación de requisitos y casos de uso**
 
-Por otro lado, existen aplicaciones móviles que simulan esta mecánica en pantallas táctiles, pero carecen completamente del estímulo físico e inmersivo que proporciona golpear un botón real retroiluminado. Este proyecto se posiciona como una solución intermedia: un prototipo físico tangible, de funcionamiento intuitivo, que integra lógica programable y periféricos electrónicos, ideal para demostrar la integración de hardware y software en un dispositivo autónomo de escritorio.
+En el mercado del entretenimiento existen múltiples máquinas tipo arcade o juguetes domésticos orientados a la velocidad de reacción. Competidores como las [máquinas de *Whack-A-Mole* comerciales de gran formato](https://primetimeamusements.com/product/whac-a-mole/) ofrecen una experiencia robusta, pero son costosas, pesadas y cerradas a cualquier tipo de modificación o reprogramación.
+
+Por otro lado, existen aplicaciones móviles (como se observa en las búsquedas para [Android](https://play.google.com/store/search?q=whack+a+mole&pli=1&c=apps) e [iOS](https://apps.apple.com/ar/iphone/search?term=whack%20a%20mole)) que simulan esta mecánica en pantallas táctiles, pero carecen completamente del estímulo físico e inmersivo que proporciona golpear un botón real retroiluminado. Este proyecto se posiciona como una solución intermedia: un prototipo físico tangible, de funcionamiento intuitivo, que integra lógica programable y periféricos electrónicos, ideal para demostrar la integración de hardware y software en un dispositivo autónomo de escritorio.
 
 #### **2.1 Requisitos del proyecto**
 
@@ -149,9 +186,14 @@ En la Tabla 2.1 se detallan los principales requisitos funcionales del sistema b
 |  | 3.3 | Si se agota el intervalo del estímulo sin respuesta, la oportunidad se pierde y el sistema genera una nueva secuencia luminosa. |
 | Energía | 4.1 | El sistema de alimentación proporcionará las tensiones necesarias y estables para la unidad de control, los LEDs de los pulsadores y el display. |
 <p align="center"><em>Tabla 2.1: Requisitos funcionales del MVP.</em></p>
-En las Tablas 2.2 a 2.4 se presentan 3 casos de uso para el sistema.
 
-#### **2.2 Caso de uso 1: El usuario inicia y juega una partida**
+
+#### **2.2 Casos de uso**
+
+En las Tablas 2.2.2 a 2.2.4 se presentan 3 casos de uso para el sistema.
+
+##### **2.2.1 Caso de uso 1: El usuario inicia y juega una partida**
+
 
 | Elemento            | Definición                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -164,7 +206,10 @@ En las Tablas 2.2 a 2.4 se presentan 3 casos de uso para el sistema.
 	<img src="/img/caso_1.png" alt="Caso de uso 1" width="600">
 </p>
 <p align="center"><em>Figura 2.2: Diagrama de secuencias del primer caso de uso.</em></p>
-#### **2.3 Caso de uso 2: El jugador comete un error (Respuesta incorrecta u Omisión)**
+
+
+##### **2.2.2 Caso de uso 2: El jugador comete un error (Respuesta incorrecta u Omisión)**
+
 
 | Elemento            | Definición                                                                                                                                                                                                                                                                                                       |
 | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -172,12 +217,15 @@ En las Tablas 2.2 a 2.4 se presentan 3 casos de uso para el sistema.
 | Precondiciones      | Una partida se encuentra en curso. Un pulsador específico está actualmente iluminado esperando interacción.                                                                                                                                                                                                      |
 | Flujo principal     | El jugador presiona un pulsador que no es el que se encuentra iluminado. El sistema detecta la lectura inválida, registra el error, no suma ningún punto al marcador (y aplica penalización interna si está configurada), apaga el estímulo actual y genera inmediatamente uno nuevo para continuar la dinámica. |
 | Flujos alternativos | a) Tiempo agotado: El jugador no presiona ningún botón y el tiempo asignado al estímulo expira. El sistema apaga el botón iluminado, considera la oportunidad perdida (sin sumar puntos) y enciende uno nuevo.                                                                                                   |
-<p align="center"><em>Tabla 2.3: Segundo caso de uso.</em></p>
+<p align="center"><em>Tabla 2.2.2: Segundo caso de uso.</em></p>
 <p align="center">
 	<img src="/img/caso_2.png" alt="Caso de uso 2" width="600">
 </p>
-<p align="center"><em>Figura 2.3: Diagrama de secuencias del segundo caso de uso.</em></p>
-#### **2.4 Caso de uso 3: Finalización automática de la partida**
+<p align="center"><em>Figura 2.2.2: Diagrama de secuencias del segundo caso de uso.</em></p>
+
+
+##### **2.2.3 Caso de uso 3: Finalización automática de la partida**
+
 
 | Elemento            | Definición                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -185,8 +233,8 @@ En las Tablas 2.2 a 2.4 se presentan 3 casos de uso para el sistema.
 | Precondiciones      | El jugador está en medio de una partida, respondiendo a los estímulos.                                                                                                                                                                                                                                                                                                                                                                                                            |
 | Flujo principal     | El tiempo total establecido para la partida se agota. La unidad de control detiene inmediatamente la generación de nuevos estímulos aleatorios y apaga cualquier pulsador que se encuentre iluminado. El sistema bloquea el registro de nuevas pulsaciones y el display digital parpadea o mantiene fijo el puntaje final acumulado para que el jugador pueda visualizar su desempeño. El sistema queda en estado de espera hasta que se vuelva a accionar el pulsador de inicio. |
 | Flujos alternativos | a) El jugador presiona un botón milisegundos después de que termine el tiempo: La unidad de control descarta la entrada ya que el estado del juego pasó a "finalizado".                                                                                                                                                                                                                                                                                                           |
-<p align="center"><em>Tabla 2.4: Tercer caso de uso.</em></p>
+<p align="center"><em>Tabla 2.2.3: Tercer caso de uso.</em></p>
 <p align="center">
 	<img src="/img/caso_3.png" alt="Caso de uso 3" width="600">
 </p>
-<p align="center"><em>Figura 2.4: Diagrama de secuencias del tercer caso de uso.</em></p>
+<p align="center"><em>Figura 2.2.3: Diagrama de secuencias del tercer caso de uso.</em></p>
